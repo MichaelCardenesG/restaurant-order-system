@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cocina en tiempo real</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+        }
+
+        .pedido {
+            border: 2px solid #444;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            background: #222;
+        }
+
+        .mesa {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .estado {
+            margin-top: 10px;
+            color: #00ffcc;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Cocina (Pedidos en Vivo)</h1>
+
+<button onclick="connect()" id="btn">Conectar</button>
+
+
+<div id="pedidos"></div>
+
+<script>
+
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS("http://localhost:8080/ws");
+        stompClient = Stomp.over(socket);
+
+        stompClient.debug = null; // 🔥 quita logs feos
+
+        const btn = document.getElementById("btn");
+        btn.disabled = true;
+
+        stompClient.connect({}, function () {
+            console.log("Conectado al servidor");
+
+            stompClient.subscribe("/topic/pedidos", function (message) {
+                const pedido = JSON.parse(message.body);
+                mostrarPedido(pedido);
+            });
+        });
+    }
+
+
+    function mostrarPedido(pedido) {
+
+    const container = document.getElementById("pedidos");
+
+    let existing = document.getElementById("pedido-" + pedido.pedidoId);
+
+    let itemsHtml = "";
+
+    pedido.items.forEach(item => {
+        itemsHtml += `<p>${item.cantidad}x ${item.producto}</p>`;
+    });
+
+    const html = `
+        <div class="mesa">Mesa ${pedido.mesa}</div>
+        ${itemsHtml}
+        <div class="estado">Estado: ${pedido.estado}</div>
+    `;
+
+    if (existing) {
+        // 🔥 ACTUALIZA (NO DUPLICA)
+        existing.innerHTML = html;
+    } else {
+        // 🔥 CREA NUEVO
+        const div = document.createElement("div");
+        div.className = "pedido";
+        div.id = "pedido-" + pedido.pedidoId;
+        div.innerHTML = html;
+
+        container.prepend(div);
+    }
+}
+
+</script>
+
+</body>
+</html>

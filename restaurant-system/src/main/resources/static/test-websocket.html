@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+
+<body>
+
+<button onclick="connect()">Conectar</button>
+
+<script>
+
+    function connect() {
+
+        var socket = new SockJS("http://localhost:8080/ws");
+        var stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+
+            console.log("Conectado");
+
+            stompClient.subscribe("/topic/pedidos", function(message) {
+
+                console.log("Nuevo pedido:", JSON.parse(message.body));
+
+            });
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>
