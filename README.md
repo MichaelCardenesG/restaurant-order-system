@@ -87,10 +87,13 @@ CREATE DATABASE restaurant_system;
 
 3. Configure your credentials in `src/main/resources/application.properties`
 ```properties
+spring.application.name=restaurant-system
 spring.datasource.url=jdbc:mysql://localhost:3306/restaurant_system
 spring.datasource.username=your_username
 spring.datasource.password=your_password
+
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
 ```
 
 4. Run the project
