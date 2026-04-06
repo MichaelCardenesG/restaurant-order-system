@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import com.restaurant.restaurant_system.dto.PedidoCocinaDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PedidoService {
@@ -77,6 +78,7 @@ public class PedidoService {
 
         return actualizado;
     }
+    @Transactional
     public List<PedidoCocinaDTO> pedidosPendientes() {
         return pedidoRepository.findByEstado(EstadoPedido.PENDIENTE)
                 .stream()

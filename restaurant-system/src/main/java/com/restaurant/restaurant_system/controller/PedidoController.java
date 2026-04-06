@@ -26,16 +26,11 @@ public class PedidoController {
     public List<Pedido> listarPedidos(){
         return pedidoService.listarPedidos();
     }
-    /*@GetMapping("/pendientes")
-    public List<Pedido> pedidosPendientes(){
-        return pedidoService.obtenerPedidosPendientes();
-    }*/
 
     @GetMapping("/pendientes")
     public List<PedidoCocinaDTO> pedidosPendientes(){
         return pedidoService.pedidosPendientes();
     }
-
 
 
     @PatchMapping("/{id}/estado")
