@@ -21,4 +21,21 @@ public class ProductoService {
     public Producto crearProducto(Producto producto) {
         return repository.save(producto);
     }
+
+    public Producto editarProducto(Long id, Producto producto) {
+        // Find existing product and update its fields
+        Producto existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        existing.setNombre(producto.getNombre());
+        existing.setDescripcion(producto.getDescripcion());
+        existing.setPrecio(producto.getPrecio());
+        existing.setCategoria(producto.getCategoria());
+        existing.setDisponible(producto.isDisponible());
+        return repository.save(existing);
+    }
+
+    public void eliminarProducto(Long id) {
+        // Delete product by id
+        repository.deleteById(id);
+    }
 }

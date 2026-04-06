@@ -23,4 +23,19 @@ public class MesaController {
     public Mesa crearMesa(@RequestBody Mesa mesa) {
         return mesaService.crearMesa(mesa);
     }
+
+    @PostMapping("/{id}/llamar")
+    public void llamarCamarero(@PathVariable Long id) {
+        mesaService.llamarCamarero(id);
+    }
+
+    @PutMapping("/{id}")
+    public Mesa editarMesa(@PathVariable Long id, @RequestBody Mesa mesa) {
+        return mesaService.editarMesa(id, mesa);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminarMesa(@PathVariable Long id) {
+        mesaService.eliminarMesa(id);
+    }
 }

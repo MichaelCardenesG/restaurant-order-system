@@ -1,16 +1,29 @@
 package com.restaurant.restaurant_system.service;
 
 import com.restaurant.restaurant_system.dto.ItemCocinaDTO;
+import com.restaurant.restaurant_system.dto.LlamadaCamareroDTO;
 import com.restaurant.restaurant_system.dto.PedidoCocinaDTO;
 import com.restaurant.restaurant_system.entity.Pedido;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import com.restaurant.restaurant_system.entity.Mesa;
+
 
 import java.util.List;
 
 @Service
 public class WebSocketService {
     private final SimpMessagingTemplate messagingTemplate;
+    public void llamarCamarero(Mesa mesa) {
+        // Send waiter call notification via WebSocket
+        LlamadaCamareroDTO mensaje = new LlamadaCamareroDTO(
+                "LLAMADA_CAMARERO",
+                mesa.getNumero(),
+                mesa.getId()
+        );
+        messagingTemplate.convertAndSend("/topic/camarero", mensaje);
+    }
+
 
     public WebSocketService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;

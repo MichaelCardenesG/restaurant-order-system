@@ -25,4 +25,14 @@ public class ProductoController {
     public Producto crearProducto(@RequestBody Producto producto) {
         return productoService.crearProducto(producto);
     }
+
+    @PutMapping("/{id}")
+    public Producto editarProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        return productoService.editarProducto(id, producto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminarProducto(@PathVariable Long id) {
+        productoService.eliminarProducto(id);
+    }
 }
