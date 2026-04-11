@@ -3,6 +3,13 @@ import { useState, useEffect } from "react";
 const BACKEND_URL = "http://localhost:8080";
 
 function Admin() {
+
+  // Get stored JWT token for authenticated requests
+  const getAuthHeader = () => ({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem("adminToken")}`,
+    });
+
   // Active tab: "mesas" or "productos"
   const [tabActiva, setTabActiva] = useState("mesas");
 
@@ -45,7 +52,7 @@ function Admin() {
     if (!nuevaMesa.numero) return;
     fetch(`${BACKEND_URL}/mesas`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeader(),
       body: JSON.stringify({ numero: parseInt(nuevaMesa.numero), estado: nuevaMesa.estado }),
     }).then(() => {
       fetchMesas();
@@ -56,7 +63,7 @@ function Admin() {
   const editarMesa = () => {
     fetch(`${BACKEND_URL}/mesas/${mesaEditando.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeader(),
       body: JSON.stringify(mesaEditando),
     }).then(() => {
       fetchMesas();
@@ -66,7 +73,7 @@ function Admin() {
 
   const eliminarMesa = (id) => {
     if (!confirm("¿Eliminar esta mesa?")) return;
-    fetch(`${BACKEND_URL}/mesas/${id}`, { method: "DELETE" }).then(fetchMesas);
+    fetch(`${BACKEND_URL}/mesas/${id}`, { method: "DELETE", headers: getAuthHeader(),}).then(fetchMesas);
   };
 
   // --- PRODUCTO ACTIONS ---
@@ -74,7 +81,7 @@ function Admin() {
     if (!nuevoProducto.nombre || !nuevoProducto.precio) return;
     fetch(`${BACKEND_URL}/productos`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeader(),
       body: JSON.stringify({ ...nuevoProducto, precio: parseFloat(nuevoProducto.precio) }),
     }).then(() => {
       fetchProductos();
@@ -85,7 +92,7 @@ function Admin() {
   const editarProducto = () => {
     fetch(`${BACKEND_URL}/productos/${productoEditando.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeader(),
       body: JSON.stringify(productoEditando),
     }).then(() => {
       fetchProductos();
@@ -95,7 +102,7 @@ function Admin() {
 
   const eliminarProducto = (id) => {
     if (!confirm("¿Eliminar este producto?")) return;
-    fetch(`${BACKEND_URL}/productos/${id}`, { method: "DELETE" }).then(fetchProductos);
+    fetch(`${BACKEND_URL}/productos/${id}`, { method: "DELETE", headers: getAuthHeader(),}).then(fetchProductos);
   };
 
   // --- STYLES ---
