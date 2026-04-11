@@ -4,6 +4,7 @@ import Mesa from './pages/Mesa';
 import Camarero from './pages/Camarero';
 import Admin from './pages/Admin';
 import AdminLogin from './pages/AdminLogin';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -12,7 +13,11 @@ function App() {
           <Route path ="/mesa" element={<Mesa />} />
            <Route path="/camarero" element={<Camarero />} />
            <Route path="/admin/login" element={<AdminLogin />} />
-           <Route path="/admin" element={<Admin />} />
+           <Route path="/admin" element={
+                   <ProtectedRoute>
+                     <Admin />
+                   </ProtectedRoute>
+                 } />
       </Routes>
       )
 }
