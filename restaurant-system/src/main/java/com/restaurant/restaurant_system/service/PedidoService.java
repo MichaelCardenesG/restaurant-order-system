@@ -97,6 +97,25 @@ public class PedidoService {
                 ))
                 .toList();
     }
+    @Transactional
+    public List<PedidoCocinaDTO> pedidosActivos() {
+        // Return all orders that are not delivered
+        return pedidoRepository.findByEstadoNot(EstadoPedido.ENTREGADO)
+                .stream()
+                .map(pedido -> new PedidoCocinaDTO(
+                        pedido.getId(),
+                        pedido.getMesa().getNumero(),
+                        pedido.getDetalles().stream()
+                                .map(d -> new ItemCocinaDTO(
+                                        d.getProducto().getNombre(),
+                                        d.getCantidad()
+                                ))
+                                .toList(),
+                        pedido.getEstado().toString(),
+                        "ACTIVO"
+                ))
+                .toList();
+    }
 
 
 }

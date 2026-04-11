@@ -29,8 +29,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin"));
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/pedidos").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/pedidos/*/estado").permitAll()
                         .requestMatchers(HttpMethod.GET, "/pedidos/pendientes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/pedidos/activos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/mesas/*/llamar").permitAll()
 
                         // Admin endpoints - require authentication

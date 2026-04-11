@@ -8,4 +8,5 @@ import com.restaurant.restaurant_system.entity.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface PedidoRepository  extends JpaRepository<Pedido,Long>{
     List<Pedido> findByEstado(EstadoPedido estado);
+    List<Pedido> findByEstadoNot(EstadoPedido estado); // Returns all orders except the given status
 }

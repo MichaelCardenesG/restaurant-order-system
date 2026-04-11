@@ -10,13 +10,14 @@ function Cocina() {
   const colorPorEstado = (estado) => {
               if (estado === "PENDIENTE") return "#fff8e1";       // amarillo
               if (estado === "EN_PREPARACION") return "#e3f2fd";  // azul
+              if (estado === "LISTO") return "#f3e5f5";        // purple
               if (estado === "ENTREGADO") return "#e8f5e9";       // verde
               return "#ffffff";
             };
 
   useEffect(() => {
     // Cargar pedidos pendientes al inicio
-    fetch(`${BACKEND_URL}/pedidos/pendientes`)
+    fetch(`${BACKEND_URL}/pedidos/activos`)
       .then((res) => res.json())
       .then((data) => setPedidos(data));
 
@@ -83,8 +84,8 @@ function Cocina() {
                 <button onClick={() => cambiarEstado(pedido.pedidoId, "EN_PREPARACION")}>
                   👨‍🍳 Preparando
                 </button>
-                <button onClick={() => cambiarEstado(pedido.pedidoId, "ENTREGADO")}>
-                  ✅ Entregado
+                <button onClick={() => cambiarEstado(pedido.pedidoId, "LISTO")}>
+                  ✅ Listo
                 </button>
               </div>
             </div>

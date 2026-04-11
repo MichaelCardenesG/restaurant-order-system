@@ -31,6 +31,10 @@ public class PedidoController {
     public List<PedidoCocinaDTO> pedidosPendientes(){
         return pedidoService.pedidosPendientes();
     }
+    @GetMapping("/activos")
+    public List<PedidoCocinaDTO> pedidosActivos() {
+        return pedidoService.pedidosActivos();
+    }
 
 
     @PatchMapping("/{id}/estado")
