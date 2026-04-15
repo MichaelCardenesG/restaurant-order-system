@@ -4,10 +4,12 @@ public class ItemCocinaDTO {
 
     private String producto;
     private int cantidad;
+    private String notas;
 
-    public ItemCocinaDTO(String producto, int cantidad) {
+    public ItemCocinaDTO(String producto, int cantidad, String notas) {
         this.producto = producto;
         this.cantidad = cantidad;
+        this.notas = notas;
     }
 
     public String getProducto() {
@@ -17,4 +19,5 @@ public class ItemCocinaDTO {
     public int getCantidad() {
         return cantidad;
     }
+    public String getNotas() { return notas; }
 }

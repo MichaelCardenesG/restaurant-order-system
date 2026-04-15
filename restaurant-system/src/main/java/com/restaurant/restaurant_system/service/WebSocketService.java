@@ -34,7 +34,8 @@ public class WebSocketService {
                 .stream()
                 .map(d -> new ItemCocinaDTO(
                         d.getProducto().getNombre(),
-                        d.getCantidad()
+                        d.getCantidad(),
+                        d.getNotas()
                 ))
                 .toList();
 
@@ -43,7 +44,8 @@ public class WebSocketService {
                 pedido.getMesa().getNumero(),
                 items,
                 pedido.getEstado().toString(),
-                tipo
+                tipo,
+                pedido.getHoraCreacion()
         );
 
         messagingTemplate.convertAndSend("/topic/pedidos", dto);

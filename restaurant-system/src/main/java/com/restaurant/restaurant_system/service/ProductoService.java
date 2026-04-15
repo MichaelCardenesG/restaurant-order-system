@@ -15,7 +15,7 @@ public class ProductoService {
     }
 
     public List<Producto> listarProductos() {
-        return repository.findAll();
+        return repository.findByDisponibleTrue();
     }
 
     public Producto crearProducto(Producto producto) {
@@ -35,7 +35,10 @@ public class ProductoService {
     }
 
     public void eliminarProducto(Long id) {
-        // Delete product by id
-        repository.deleteById(id);
+        Producto producto = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        producto.setDisponible(false);
+        repository.save(producto);
     }
 }

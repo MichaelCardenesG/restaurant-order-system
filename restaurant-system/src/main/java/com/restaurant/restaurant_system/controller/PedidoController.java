@@ -8,6 +8,8 @@ import com.restaurant.restaurant_system.repository.PedidoRepository;
 import com.restaurant.restaurant_system.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,13 @@ public class PedidoController {
     @GetMapping("/activos")
     public List<PedidoCocinaDTO> pedidosActivos() {
         return pedidoService.pedidosActivos();
+    }
+    @GetMapping("/historial")
+    public List<PedidoCocinaDTO> obtenerHistorial(
+            @RequestParam(required = false) LocalDateTime fechaInicio,
+            @RequestParam(required = false) LocalDateTime fechaFin,
+            @RequestParam(required = false) Integer mesaNumero) {
+        return pedidoService.obtenerHistorial(fechaInicio, fechaFin, mesaNumero);
     }
 
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import HistorialPedidos from "../components/HistorialPedidos";
 
 const BACKEND_URL = "http://localhost:8080";
 
@@ -99,8 +100,13 @@ function Camarero() {
           p.id === producto.id ? { ...p, cantidad: p.cantidad + 1 } : p
         );
       }
-      return [...prev, { ...producto, cantidad: 1 }];
+      return [...prev, { ...producto, cantidad: 1, notas: "" }];
     });
+  };
+  const actualizarNota = (productoId, nota) => {
+      setCarrito((prev) =>
+          prev.map((p) => (p.id === productoId ? { ...p, notas: nota } : p))
+      );
   };
 
   // Decrease quantity or remove from cart
@@ -121,6 +127,7 @@ function Camarero() {
       items: carrito.map((p) => ({
         productoId: p.id,
         cantidad: p.cantidad,
+        notas: p.notas || "",
       })),
     };
 
@@ -178,7 +185,7 @@ function Camarero() {
   });
 
   return (
-    <div style={{ fontFamily: "sans-serif", padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
+    <div style={{ fontFamily: "sans-serif", padding: "20px", maxWidth: "900px", margin: "0 auto",  paddingBottom: "200px" }}>
       <h1>🧑‍🍽️ Vista Camarero</h1>
 
       {/* Tabs */}
@@ -191,6 +198,9 @@ function Camarero() {
         </button>
         <button onClick={() => setTabActiva("pedidosActivos")} style={btnTab(tabActiva === "pedidosActivos")}>
           📋 Pedidos Activos {pedidosActivos.length > 0 && `(${pedidosActivos.length})`}
+        </button>
+        <button onClick={() => setTabActiva("historial")} style={btnTab(tabActiva === "historial")}>
+          📜 Historial
         </button>
       </div>
 
@@ -287,6 +297,21 @@ function Camarero() {
                     <span>{item.cantidad}</span>
                     <button onClick={() => agregarAlCarrito(item)}>+</button>
                   </div>
+                  <input
+                              type="text"
+                              placeholder="Nota (ej: sin tomate)"
+                              value={item.notas}
+                              onChange={(e) => actualizarNota(item.id, e.target.value)}
+                              style={{
+                                  width: "100%",
+                                  marginTop: "4px",
+                                  padding: "6px",
+                                  borderRadius: "4px",
+                                  border: "1px solid #ddd",
+                                  fontSize: "13px",
+                                  boxSizing: "border-box",
+                              }}
+                          />
                 </div>
               ))}
               <button
@@ -316,7 +341,13 @@ function Camarero() {
                     <p style={{ margin: "0 0 8px" }}><strong>Estado:</strong> {label}</p>
                     <ul style={{ margin: "0 0 12px", paddingLeft: "16px" }}>
                       {pedido.items?.map((item, i) => (
-                        <li key={i}>{item.cantidad}x {item.producto}</li>
+                        <li key={i}>{item.cantidad}x {item.producto}
+                            {item.notas && (
+                                        <span style={{ display: "block", fontSize: "12px", color: "#e65100", fontStyle: "italic" }}>
+                                            📝 {item.notas}
+                                        </span>
+                                    )}
+                            </li>
                       ))}
                     </ul>
 
@@ -336,7 +367,9 @@ function Camarero() {
           )}
         </div>
       )}
+        {tabActiva === "historial" && <HistorialPedidos />}
     </div>
+
   );
 }
 

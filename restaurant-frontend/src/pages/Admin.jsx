@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = "http://localhost:8080";
 
@@ -12,6 +13,13 @@ function Admin() {
 
   // Active tab: "mesas" or "productos"
   const [tabActiva, setTabActiva] = useState("mesas");
+
+  const navigate = useNavigate();
+
+  const cerrarSesion = () => {
+    sessionStorage.removeItem("adminToken");
+    navigate("/admin/login");
+  };
 
   // --- MESAS STATE ---
   const [mesas, setMesas] = useState([]);
@@ -28,11 +36,16 @@ function Admin() {
     disponible: true,
   });
   const [productoEditando, setProductoEditando] = useState(null);
+  // --- CATEGORIAS STATE ---
+  const [categorias, setCategorias] = useState([]);
+  const [nuevaCategoria, setNuevaCategoria] = useState("");
+  const [categoriaEditando, setCategoriaEditando] = useState(null);
 
   // Fetch all tables on load
   useEffect(() => {
     fetchMesas();
     fetchProductos();
+    fetchCategorias();
   }, []);
 
   const fetchMesas = () => {
@@ -45,6 +58,12 @@ function Admin() {
     fetch(`${BACKEND_URL}/productos`)
       .then((res) => res.json())
       .then((data) => setProductos(data));
+  };
+
+  const fetchCategorias = () => {
+      fetch(`${BACKEND_URL}/categorias`)
+          .then((res) => res.json())
+          .then(setCategorias);
   };
 
   // --- MESA ACTIONS ---
@@ -105,6 +124,37 @@ function Admin() {
     fetch(`${BACKEND_URL}/productos/${id}`, { method: "DELETE", headers: getAuthHeader(),}).then(fetchProductos);
   };
 
+  const crearCategoria = () => {
+      if (!nuevaCategoria.trim()) return;
+      fetch(`${BACKEND_URL}/categorias`, {
+          method: "POST",
+          headers: getAuthHeader(),
+          body: JSON.stringify({ nombre: nuevaCategoria }),
+      }).then(() => {
+          fetchCategorias();
+          setNuevaCategoria("");
+      });
+  };
+
+  const editarCategoria = () => {
+      fetch(`${BACKEND_URL}/categorias/${categoriaEditando.id}`, {
+          method: "PUT",
+          headers: getAuthHeader(),
+          body: JSON.stringify({ nombre: categoriaEditando.nombre }),
+      }).then(() => {
+          fetchCategorias();
+          setCategoriaEditando(null);
+      });
+  };
+
+  const eliminarCategoria = (id) => {
+      if (!confirm("¿Eliminar esta categoría?")) return;
+      fetch(`${BACKEND_URL}/categorias/${id}`, {
+          method: "DELETE",
+          headers: getAuthHeader(),
+      }).then(fetchCategorias);
+  };
+
   // --- STYLES ---
   const inputStyle = {
     padding: "8px",
@@ -127,7 +177,12 @@ function Admin() {
 
   return (
     <div style={{ fontFamily: "sans-serif", padding: "24px", maxWidth: "900px", margin: "0 auto" }}>
-      <h1>⚙️ Panel de Administración</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <h1 style={{ margin: 0 }}>⚙️ Panel de Administración</h1>
+          <button onClick={cerrarSesion} style={btnStyle("#f44336")}>
+              🚪 Cerrar Sesión
+          </button>
+      </div>
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
@@ -149,6 +204,16 @@ function Admin() {
         >
           🍔 Productos
         </button>
+
+        <button
+            onClick={() => setTabActiva("categorias")}
+            style={{
+                ...btnStyle(tabActiva === "categorias" ? "#333" : "#ddd"),
+                color: tabActiva === "categorias" ? "#fff" : "#333",
+            }}
+        >
+            🏷️ Categorías
+        </button>
       </div>
 
       {/* ---- MESAS TAB ---- */}
@@ -168,6 +233,7 @@ function Admin() {
               + Crear Mesa
             </button>
           </div>
+
 
           {/* Mesas list */}
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -214,6 +280,7 @@ function Admin() {
         </div>
       )}
 
+
       {/* ---- PRODUCTOS TAB ---- */}
       {tabActiva === "productos" && (
         <div>
@@ -241,13 +308,18 @@ function Admin() {
               onChange={(e) => setNuevoProducto({ ...nuevoProducto, precio: e.target.value })}
               style={inputStyle}
             />
-            <input
-              type="text"
-              placeholder="Categoría"
-              value={nuevoProducto.categoria}
-              onChange={(e) => setNuevoProducto({ ...nuevoProducto, categoria: e.target.value })}
-              style={inputStyle}
-            />
+            <select
+                value={nuevoProducto.categoria}
+                onChange={(e) => setNuevoProducto({ ...nuevoProducto, categoria: e.target.value })}
+                style={inputStyle}
+            >
+                <option value="">Seleccionar categoría</option>
+                {categorias.map((cat) => (
+                    <option key={cat.id} value={cat.nombre}>
+                        {cat.nombre}
+                    </option>
+                ))}
+            </select>
             <label style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
               <input
                 type="checkbox"
@@ -266,6 +338,7 @@ function Admin() {
             <thead>
               <tr style={{ background: "#333", color: "#fff" }}>
                 <th style={{ padding: "10px", textAlign: "left" }}>Nombre</th>
+                <th style={{ padding: "10px", textAlign: "left" }}>Descripción</th>
                 <th style={{ padding: "10px", textAlign: "left" }}>Categoría</th>
                 <th style={{ padding: "10px", textAlign: "left" }}>Precio</th>
                 <th style={{ padding: "10px", textAlign: "left" }}>Disponible</th>
@@ -289,12 +362,44 @@ function Admin() {
                   </td>
                   <td style={{ padding: "10px" }}>
                     {productoEditando?.id === producto.id ? (
-                      <input
-                        type="text"
-                        value={productoEditando.categoria}
-                        onChange={(e) => setProductoEditando({ ...productoEditando, categoria: e.target.value })}
-                        style={{ ...inputStyle, marginBottom: 0 }}
+                      <textarea
+                        value={productoEditando.descripcion}
+                        onChange={(e) =>
+                          setProductoEditando({
+                            ...productoEditando,
+                            descripcion: e.target.value,
+                          })
+                        }
+                        rows={2}
+                        style={{
+                          ...inputStyle,
+                          marginBottom: 0,
+                          resize: "vertical",
+                        }}
                       />
+                    ) : (
+                      producto.descripcion
+                    )}
+                  </td>
+                  <td style={{ padding: "10px" }}>
+                    {productoEditando?.id === producto.id ? (
+                      <select
+                        value={productoEditando.categoria}
+                        onChange={(e) =>
+                          setProductoEditando({
+                            ...productoEditando,
+                            categoria: e.target.value,
+                          })
+                        }
+                        style={inputStyle}
+                      >
+                        <option value="">Seleccionar categoría</option>
+                        {categorias.map((cat) => (
+                          <option key={cat.id} value={cat.nombre}>
+                            {cat.nombre}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
                       producto.categoria
                     )}
@@ -340,8 +445,70 @@ function Admin() {
             </tbody>
           </table>
         </div>
+
       )}
+      {tabActiva === "categorias" && (
+          <div>
+              {/* Crear categoría */}
+              <div style={{ background: "#f9f9f9", padding: "16px", borderRadius: "8px", marginBottom: "24px" }}>
+                  <h3>Nueva Categoría</h3>
+                  <input
+                      type="text"
+                      placeholder="Nombre de categoría"
+                      value={nuevaCategoria}
+                      onChange={(e) => setNuevaCategoria(e.target.value)}
+                      style={inputStyle}
+                  />
+                  <button onClick={crearCategoria} style={btnStyle("#4caf50")}>
+                      + Crear Categoría
+                  </button>
+              </div>
+
+              {/* Lista de categorías */}
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                      <tr style={{ background: "#333", color: "#fff" }}>
+                          <th style={{ padding: "10px", textAlign: "left" }}>Nombre</th>
+                          <th style={{ padding: "10px", textAlign: "left" }}>Acciones</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {categorias.map((cat) => (
+                          <tr key={cat.id} style={{ borderBottom: "1px solid #ddd" }}>
+                              <td style={{ padding: "10px" }}>
+                                  {categoriaEditando?.id === cat.id ? (
+                                      <input
+                                          type="text"
+                                          value={categoriaEditando.nombre}
+                                          onChange={(e) => setCategoriaEditando({ ...categoriaEditando, nombre: e.target.value })}
+                                          style={{ ...inputStyle, marginBottom: 0 }}
+                                      />
+                                  ) : (
+                                      cat.nombre
+                                  )}
+                              </td>
+                              <td style={{ padding: "10px", display: "flex", gap: "8px" }}>
+                                  {categoriaEditando?.id === cat.id ? (
+                                      <>
+                                          <button onClick={editarCategoria} style={btnStyle("#4caf50")}>✅ Guardar</button>
+                                          <button onClick={() => setCategoriaEditando(null)} style={btnStyle("#999")}>Cancelar</button>
+                                      </>
+                                  ) : (
+                                      <>
+                                          <button onClick={() => setCategoriaEditando({ ...cat })} style={btnStyle("#2196f3")}>✏️ Editar</button>
+                                          <button onClick={() => eliminarCategoria(cat.id)} style={btnStyle("#f44336")}>🗑️ Eliminar</button>
+                                      </>
+                                  )}
+                              </td>
+                          </tr>
+                      ))}
+                  </tbody>
+              </table>
+          </div>
+      )}
+
     </div>
+
   );
 }
 

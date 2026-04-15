@@ -7,6 +7,8 @@ import com.restaurant.restaurant_system.entity.*;
 import com.restaurant.restaurant_system.exception.ResourceNotFoundException;
 import com.restaurant.restaurant_system.repository.*;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.restaurant.restaurant_system.dto.PedidoCocinaDTO;
@@ -55,6 +57,7 @@ public class PedidoService {
             detalle.setPedido(pedido);
             detalle.setProducto(producto);
             detalle.setCantidad(item.getCantidad());
+            detalle.setNotas(item.getNotas());
 
             detalles.add(detalle);
 
@@ -88,11 +91,13 @@ public class PedidoService {
                         pedido.getDetalles().stream()
                                 .map(d -> new ItemCocinaDTO(
                                         d.getProducto().getNombre(),
-                                        d.getCantidad()
+                                        d.getCantidad(),
+                                        d.getNotas()
                                 ))
                                 .toList(),
                         pedido.getEstado().toString(),
-                        "PENDIENTE"
+                        "PENDIENTE",
+                        pedido.getHoraCreacion()
 
                 ))
                 .toList();
@@ -108,11 +113,38 @@ public class PedidoService {
                         pedido.getDetalles().stream()
                                 .map(d -> new ItemCocinaDTO(
                                         d.getProducto().getNombre(),
-                                        d.getCantidad()
+                                        d.getCantidad(),
+                                        d.getNotas()
                                 ))
                                 .toList(),
                         pedido.getEstado().toString(),
-                        "ACTIVO"
+                        "ACTIVO",
+                        pedido.getHoraCreacion()
+                ))
+                .toList();
+    }
+    @Transactional
+    public List<PedidoCocinaDTO> obtenerHistorial(
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Integer mesaNumero) {
+
+        return pedidoRepository
+                .findHistorial(fechaInicio, fechaFin, mesaNumero)
+                .stream()
+                .map(pedido -> new PedidoCocinaDTO(
+                        pedido.getId(),
+                        pedido.getMesa().getNumero(),
+                        pedido.getDetalles().stream()
+                                .map(d -> new ItemCocinaDTO(
+                                        d.getProducto().getNombre(),
+                                        d.getCantidad(),
+                                        d.getNotas()
+                                ))
+                                .toList(),
+                        pedido.getEstado().toString(),
+                        "HISTORIAL",
+                        pedido.getHoraCreacion()
                 ))
                 .toList();
     }

@@ -60,7 +60,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/pedidos/*/estado").permitAll()
                         .requestMatchers(HttpMethod.GET, "/pedidos/pendientes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/pedidos/activos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/pedidos/historial").permitAll()
                         .requestMatchers(HttpMethod.POST, "/mesas/*/llamar").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categorias").permitAll()
+
 
                         // Admin endpoints - require authentication
                         .requestMatchers(HttpMethod.POST, "/productos").authenticated()
@@ -69,6 +72,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/mesas").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/mesas/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/mesas/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/categorias/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/categorias").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/categorias/**").authenticated()
+
                 )
 
                 // Add JWT filter before the default authentication filter

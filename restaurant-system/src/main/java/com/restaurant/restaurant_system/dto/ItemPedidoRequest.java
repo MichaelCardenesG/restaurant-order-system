@@ -15,6 +15,7 @@ public class ItemPedidoRequest {
     private Long productoId;
     @Min(value = 1, message = "La cantidad debe ser mayor que 0")
     private int cantidad;
+    private String notas;
 
 
 }
