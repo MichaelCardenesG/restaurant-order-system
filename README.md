@@ -5,6 +5,14 @@ Customers (or waiters) place orders from a tablet, which are instantly delivered
 
 ---
 
+## 🎬 Demo
+
+<p align="center">
+  <img src="assets/gif/Cocina-camarero.gif" width="700"/>
+</p>
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -45,7 +53,7 @@ Controller → Service → Repository → Entity
   - Products
 - Edit and delete existing data
 
-- ---
+---
 
 ### 🧾 Order Management (Waiter)
 - Place orders from a table
@@ -106,6 +114,28 @@ Controller → Service → Repository → Entity
    - Stores completed orders in history
 
 ---
+
+## 📸 Screenshots
+
+### Admin Panel
+![Admin](assets/images/admin.jpeg)
+![Admin Categorias](assets/images/admin-categorias.jpeg)
+![Admin Mesas](assets/images/admin-mesas.jpeg)
+![Admin Productos](assets/images/admin-productos.jpeg)
+
+---
+
+### Waiter View
+![Camarero Pedidos](assets/images/camarero-pedidos.jpeg)
+![Camarero Activos](assets/images/camarero-pedidos-activos.jpeg)
+![Camarero Historial](assets/images/camarero-historial.jpeg)
+![Camarero Llamadas](assets/images/camarero-llamadas.jpeg)
+
+---
+
+### Kitchen View
+![Cocina](assets/images/cocina-vista.jpeg)
+![Cocina Historial](assets/images/cocina-historial.jpeg)
 
 
 ## 📡 Main Endpoints
@@ -198,7 +228,7 @@ src/main/java/com/restaurant/restaurant_system/
 └── service/         # Business logic
 ```
 
-🧠 Challenges
+## 🧠 Challenges
 ```
 - Designing a simple but functional UI for the waiter
 - Avoiding duplicate orders in real-time communication
@@ -206,7 +236,7 @@ src/main/java/com/restaurant/restaurant_system/
 - Managing live state updates without breaking the system
 ```
 
-🚧 Future Improvements
+## 🚧 Future Improvements
 ```
 - Role-based system (admin / waiter / kitchen)
 - Authentication for all users
