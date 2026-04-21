@@ -1,9 +1,13 @@
 # 🍽️ Restaurant Order Management System
 
-A real-time order management system for restaurants. Customers place orders from a tablet at their table, which are instantly delivered to the kitchen via WebSockets.
+A real-time order management system for restaurants.  
+Customers (or waiters) place orders from a tablet, which are instantly delivered to the kitchen via WebSockets.
+
+---
 
 ## 🛠️ Tech Stack
 
+### Backend
 - **Java 17**
 - **Spring Boot**
 - **Spring Data JPA / Hibernate**
@@ -11,6 +15,11 @@ A real-time order management system for restaurants. Customers place orders from
 - **MySQL**
 - **Lombok**
 - **Maven**
+
+### Frontend
+- **React**
+
+---
 
 ## 🏗️ Architecture
 
@@ -28,13 +37,76 @@ Controller → Service → Repository → Entity
 
 ## ✨ Features
 
-- Create and list restaurant tables
-- Create and list menu products
-- Place orders from the table with multiple items
-- Real-time kitchen notification via WebSockets when a new order is received
-- Order status management (PENDING → IN_PREPARATION → DELIVERED)
-- Real-time notification to the kitchen on every status change
-- Query pending orders
+### 🔐 Admin Panel
+- Login required
+- Create and manage:
+  - Tables
+  - Categories
+  - Products
+- Edit and delete existing data
+
+- ---
+
+### 🧾 Order Management (Waiter)
+- Place orders from a table
+- Add multiple items to an order
+- Add custom notes
+- Send orders to the kitchen in real time
+
+---
+
+### 👨‍🍳 Kitchen View
+- Receive orders instantly via WebSockets
+- Update order status:
+  - `PENDIENTE`
+  - `EN_PREPARACION`
+  - `LISTO`
+  - `ENTREGADO`
+
+---
+
+### 🔄 Real-Time System
+- New orders appear instantly in the kitchen
+- Status updates reflect immediately for the waiter
+- No page refresh required
+
+---
+
+### 📊 Order Tracking
+- Waiters can track order status in real time
+- Kitchen and waiter share:
+  - Active orders
+  - Completed order history
+
+---
+
+## 🔄 Real Workflow
+
+1. Admin creates:
+   - Tables
+   - Categories
+   - Products
+
+2. Waiter:
+   - Creates an order
+   - Adds items and notes
+   - Sends it to the kitchen
+
+3. Kitchen:
+   - Receives order instantly
+   - Updates status → `EN_PREPARACION` → `LISTO`
+
+4. Waiter:
+   - Sees updates in real time
+   - Picks up the order
+   - Marks it as `ENTREGADO`
+
+5. System:
+   - Updates all views automatically
+   - Stores completed orders in history
+
+---
+
 
 ## 📡 Main Endpoints
 
@@ -70,7 +142,8 @@ WebSocket messages include a `tipo` field to distinguish between `NUEVO_PEDIDO` 
 ### Requirements
 - Java 17+
 - MySQL 8+
-- Maven
+- Node.js
+- Maven (or use wrapper)
 
 ### Steps
 
@@ -101,7 +174,16 @@ spring.jpa.show-sql=true
 mvn spring-boot:run
 ```
 
-The server will be available at `http://localhost:8080`
+5. Run frontend
+```bash
+npm install
+npm start
+```
+
+The app will be available at:
+
+Backend → http://localhost:8080
+Frontend → http://localhost:3000
 
 ## 📦 Project Structure
 
@@ -115,3 +197,21 @@ src/main/java/com/restaurant/restaurant_system/
 ├── repository/      # Data access layer
 └── service/         # Business logic
 ```
+
+🧠 Challenges
+```
+- Designing a simple but functional UI for the waiter
+- Avoiding duplicate orders in real-time communication
+- Keeping kitchen and waiter views synchronized
+- Managing live state updates without breaking the system
+```
+
+🚧 Future Improvements
+```
+- Role-based system (admin / waiter / kitchen)
+- Authentication for all users
+- Deployment (cloud or local network)
+- UI/UX improvements
+```
+
+
