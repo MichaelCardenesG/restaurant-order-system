@@ -207,13 +207,13 @@ mvn spring-boot:run
 5. Run frontend
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
 The app will be available at:
 
 Backend → http://localhost:8080
-Frontend → http://localhost:3000
+Frontend → http://localhost:5173
 
 ## 📦 Project Structure
 
